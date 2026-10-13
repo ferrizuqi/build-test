@@ -70,6 +70,9 @@ jobs:
               throw "ThirdPartyLicenses.md was not generated."
           }
 
+      - name: sccache
+        uses: mozilla-actions/sccache-action@v0.0.11
+
       - name: Build app
         run: |
           cargo build --release
