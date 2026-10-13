@@ -45,6 +45,7 @@ jobs:
 
       # about-cache
       - name: Restore target cache
+        id: rust-target-cache
         if: always()
         uses: actions/cache/restore@v4
         with:
