@@ -49,7 +49,7 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: target\.cargo-about-cached
-          key: ${{ steps.rust-target-cache.outputs.cache-primary-key }}
+          key: rust-tools-${{ runner.os }}-${{ runner.arch }}-${{ steps.rust-version.outputs.version }}
           restore-keys: |
             rust-tools-${{ runner.os }}-${{ runner.arch }}-
 
