@@ -1,0 +1,99 @@
+name: Release
+
+on:
+  workflow_dispatch:
+
+jobs:
+  release:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Update Rust
+        run: |
+          rustup update stable --no-self-update
+          rustup default stable
+          rustc --version
+          cargo --version
+
+      # crates.io / git dependencies
+      - name: Restore Rust cargo cache
+        id: rust-cargo-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            ~/.cargo/registry/index
+            ~/.cargo/registry/cache
+            ~/.cargo/git/db
+          key: rust-cargo-${{ runner.os }}-${{ runner.arch }}-${{ steps.rust-version.outputs.version }}
+          restore-keys: |
+            rust-cargo-${{ runner.os }}-${{ runner.arch }}-
+
+      # cargo install したツール
+      - name: Restore Rust installed tools cache
+        id: rust-tools-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ runner.temp }}/cargo-install
+          key: rust-tools-${{ runner.os }}-${{ runner.arch }}-${{ steps.rust-version.outputs.version }}
+          restore-keys: |
+            rust-tools-${{ runner.os }}-${{ runner.arch }}-
+
+      - name: Add installed Cargo tools to PATH
+        shell: pwsh
+        run: |
+          "${{ runner.temp }}/cargo-install/bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+
+      - name: Install release tools
+        if: steps.rust-tools-cache.outputs.cache-hit == ''
+        shell: pwsh
+        env:
+          CARGO_INSTALL_ROOT: ${{ runner.temp }}/cargo-install
+        run: |
+          cargo install --locked --git https://github.com/ferrizuqi/cargo-about-cached --tag v0.1.0
+          cargo install cargo-packager --version 0.11.8 --locked
+
+      - name: Generate third-party licenses
+        shell: pwsh
+        run: |
+          if (!(Test-Path "target")) { mkdir "target" }
+
+          cargo about-cached about-hbs/md.hbs `
+            -o target/ThirdPartyLicenses.md `
+            --manifest-path crates/app/ferynth/Cargo.toml
+
+          if (-not (Test-Path "target/ThirdPartyLicenses.md")) {
+              throw "ThirdPartyLicenses.md was not generated."
+          }
+
+      - name: Build app
+        run: |
+          cargo build --release
+
+      - name: Save Rust cargo cache
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            ~/.cargo/registry/index
+            ~/.cargo/registry/cache
+            ~/.cargo/git/db
+          key: ${{ steps.rust-cargo-cache.outputs.cache-primary-key }}
+
+      - name: Save Rust target cache
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: target
+          key: ${{ steps.rust-target-cache.outputs.cache-primary-key }}
+
+      - name: Save Rust installed tools cache
+        if: success()
+        uses: actions/cache/save@v4
+        with:
+          path: ${{ runner.temp }}/cargo-install
+          key: ${{ steps.rust-tools-cache.outputs.cache-primary-key }}

@@ -1,0 +1,10 @@
+[package]
+name = "build-test"
+version = "0.1.0"
+edition = "2024"
+publish = false
+
+# ビルド時間を試すために重めのライブラリを入れる
+[dependencies]
+gpui-kit = "0.7.3"
+iroh = "1.3.0"
