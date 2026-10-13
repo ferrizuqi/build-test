@@ -62,9 +62,9 @@ jobs:
         run: |
           if (!(Test-Path "target")) { mkdir "target" }
 
-          cargo about-cached about-hbs/md.hbs `
-            -o target/ThirdPartyLicenses.md `
-            --manifest-path crates/app/ferynth/Cargo.toml
+          cargo about-cached about.hbs `
+            -o target/ThirdPartyLicenses.html `
+            --manifest-path Cargo.toml
 
           if (-not (Test-Path "target/ThirdPartyLicenses.md")) {
               throw "ThirdPartyLicenses.md was not generated."
