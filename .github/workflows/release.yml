@@ -76,8 +76,8 @@ jobs:
             -o target/ThirdPartyLicenses.html `
             --manifest-path Cargo.toml
 
-          if (-not (Test-Path "target/ThirdPartyLicenses.md")) {
-              throw "ThirdPartyLicenses.md was not generated."
+          if (-not (Test-Path "target/ThirdPartyLicenses.html")) {
+              throw "ThirdPartyLicenses.html was not generated."
           }
 
       - name: sccache
