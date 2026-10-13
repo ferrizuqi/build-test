@@ -44,11 +44,15 @@ jobs:
             rust-tools-${{ runner.os }}-${{ runner.arch }}-
 
       # about-cache
-      - name: Restore about cache
+      - name: Restore target cache
         if: always()
         uses: actions/cache/restore@v4
         with:
-          path: target/.cargo-about-cached
+          path: |
+            target/.cargo-about-cached/
+            target/release/deps
+            target/release/.fingerprint
+            target/release/build
           key: rust-tools-${{ runner.os }}-${{ runner.arch }}-${{ steps.rust-version.outputs.version }}
           restore-keys: |
             rust-tools-${{ runner.os }}-${{ runner.arch }}-
@@ -80,9 +84,6 @@ jobs:
               throw "ThirdPartyLicenses.html was not generated."
           }
 
-      - name: sccache
-        uses: mozilla-actions/sccache-action@v0.0.11
-
       - name: Build app
         env:
           RUSTC_WRAPPER: sccache
@@ -105,7 +106,11 @@ jobs:
         if: always()
         uses: actions/cache/save@v4
         with:
-          path: target/.cargo-about-cached
+          path: |
+            target/.cargo-about-cached/
+            target/release/deps
+            target/release/.fingerprint
+            target/release/build
           key: ${{ steps.rust-target-cache.outputs.cache-primary-key }}
 
       - name: Save Rust installed tools cache
