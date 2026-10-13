@@ -43,6 +43,16 @@ jobs:
           restore-keys: |
             rust-tools-${{ runner.os }}-${{ runner.arch }}-
 
+      # about-cache
+      - name: Restore about cache
+        if: always()
+        uses: actions/cache/restore@v4
+        with:
+          path: target\.cargo-about-cached
+          key: ${{ steps.rust-target-cache.outputs.cache-primary-key }}
+          restore-keys: |
+            rust-tools-${{ runner.os }}-${{ runner.arch }}-
+
       - name: Add installed Cargo tools to PATH
         shell: pwsh
         run: |
@@ -91,7 +101,7 @@ jobs:
         if: always()
         uses: actions/cache/save@v4
         with:
-          path: target
+          path: target\.cargo-about-cached
           key: ${{ steps.rust-target-cache.outputs.cache-primary-key }}
 
       - name: Save Rust installed tools cache
