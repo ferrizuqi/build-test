@@ -20,6 +20,12 @@ jobs:
           rustc --version
           cargo --version
 
+      - name: Get Rust version
+        id: rust-version
+        shell: bash
+        run: |
+          echo "version=$(rustc -Vv | sha256sum | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
+
       # crates.io / git dependencies
       - name: Restore Rust cargo cache
         id: rust-cargo-cache
