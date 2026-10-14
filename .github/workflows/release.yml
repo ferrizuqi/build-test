@@ -20,19 +20,6 @@ jobs:
           rustc --version
           cargo --version
 
-      # crates.io / git dependencies
-      - name: Restore Rust cargo cache
-        id: rust-cargo-cache
-        uses: actions/cache/restore@v4
-        with:
-          path: |
-            ~/.cargo/registry/index
-            ~/.cargo/registry/cache
-            ~/.cargo/git/db
-          key: rust-cargo-${{ runner.os }}-${{ runner.arch }}-${{ steps.rust-version.outputs.version }}
-          restore-keys: |
-            rust-cargo-${{ runner.os }}-${{ runner.arch }}-
-
       # cargo install したツール
       - name: Restore Rust installed tools cache
         id: rust-tools-cache
@@ -88,16 +75,6 @@ jobs:
       - name: Build app
         run: |
           cargo build --release
-
-      - name: Save Rust cargo cache
-        if: always()
-        uses: actions/cache/save@v4
-        with:
-          path: |
-            ~/.cargo/registry/index
-            ~/.cargo/registry/cache
-            ~/.cargo/git/db
-          key: ${{ steps.rust-cargo-cache.outputs.cache-primary-key }}
 
       - name: Save Rust target cache
         if: always()
