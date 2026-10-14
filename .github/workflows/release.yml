@@ -29,7 +29,7 @@ jobs:
       # crates.io / git dependencies
       - name: Restore Rust cargo cache
         id: rust-cargo-cache
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v6
         with:
           path: |
             ~/.cargo/registry/index
@@ -42,7 +42,7 @@ jobs:
       # cargo install したツール
       - name: Restore Rust installed tools cache
         id: rust-tools-cache
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v6
         with:
           path: ${{ runner.temp }}/cargo-install
           key: rust-tools-${{ runner.os }}-${{ runner.arch }}-${{ steps.rust-version.outputs.version }}
@@ -53,7 +53,7 @@ jobs:
       - name: Restore target cache
         id: rust-target-cache
         if: always()
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v6
         with:
           path: |
             target/.cargo-about-cached/
@@ -97,7 +97,7 @@ jobs:
 
       - name: Save Rust cargo cache
         if: always()
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@v6
         with:
           path: |
             ~/.cargo/registry/index
@@ -107,7 +107,7 @@ jobs:
 
       - name: Save Rust target cache
         if: always()
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@v6
         with:
           path: |
             target/.cargo-about-cached/
@@ -118,7 +118,7 @@ jobs:
 
       - name: Save Rust installed tools cache
         if: success()
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@v6
         with:
           path: ${{ runner.temp }}/cargo-install
           key: ${{ steps.rust-tools-cache.outputs.cache-primary-key }}
