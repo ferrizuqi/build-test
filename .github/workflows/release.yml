@@ -69,7 +69,7 @@ jobs:
         env:
           CARGO_INSTALL_ROOT: ${{ runner.temp }}/cargo-install
         run: |
-          cargo install --locked --git https://github.com/ferrizuqi/cargo-about-cached --tag v0.1.0
+          cargo install --locked --git https://github.com/ferrizuqi/cargo-about-cached --tag v0.2.0
           cargo install cargo-packager --version 0.11.8 --locked
 
       - name: Generate third-party licenses
